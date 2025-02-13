@@ -3,7 +3,7 @@ from dash import Dash, html, dcc
 import dash_bootstrap_components as dbc
 
 # Create Dash app
-app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN], use_pages=True, pages_folder=r'c:\Users\GAdmin\Desktop\internship\Sindya\pages', suppress_callback_exceptions=True)
+app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN], use_pages=True, pages_folder='/workspaces/databuddybrowser/pages', suppress_callback_exceptions=True)
 
 # Define the main layout (only for the home page)
 app.layout = html.Div([
