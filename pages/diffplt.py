@@ -88,40 +88,45 @@ layout = html.Div([
         value='line',
         style={'width': '300px'}
     ),
-    html.Br(),
-    html.Label("Select Scatter Plot Mode:"),
-    dcc.Dropdown(
-        id='scatter-mode-1',
-        options=[
-            {'label': 'Markers', 'value': 'markers'},
-            {'label': 'Lines+Markers', 'value': 'lines+markers'}
-        ],
-        value='lines',
-        style={'width': '300px'}),
-    html.Br(),
-        html.Label("Select Marker Size:"),
-           dcc.Slider(
-            id='marker-size-1',
-            min=1, max=20, step=1, value=10,
-            marks={i: str(i) for i in range(1, 21)},
-            tooltip={'always_visible': True, 'placement': 'bottom'}
-        ),
-        html.Br(),
-        html.Label("Select Marker Opacity:"),
-        dcc.Slider(
-            id='marker-opacity-1',
-            min=0.1, max=1.0, step=0.1, value=0.8,
-            marks={i/10: str(i/10) for i in range(1, 11)},
-            tooltip={'always_visible': True, 'placement': 'bottom'}
-        ),
-    html.Br(),
-    html.Label("Select Line Thickness:"),
-    dcc.Slider(
-        id='line-thickness',
-        min=1, max=10, step=1, value=2,
-        marks={i: str(i) for i in range(1, 11)},
-        tooltip={'always_visible': True, 'placement': 'bottom'}
-    ),
+    html.Div([
+            html.Label("Select Scatter Plot Mode:"),
+            dcc.Dropdown(
+                id='scatter-mode-1',
+                options=[
+                    {'label': 'Markers', 'value': 'markers'},
+                    {'label': 'Lines+Markers', 'value': 'lines+markers'}
+                ],
+                value='lines',
+                style={'width': '300px'}
+            )
+        ], id='scatter-mode-group-1', style={'display': 'none'}),
+        html.Div([
+                html.Label("Select Marker Size:"),
+                dcc.Slider(
+                    id='marker-size-1',
+                    min=1, max=20, step=1, value=10,
+                    marks={i: str(i) for i in range(1, 21)},
+                    tooltip={'always_visible': True, 'placement': 'bottom'}
+                )
+            ], id='marker-size-group-1', style={'display': 'none'}),
+        html.Div([
+            html.Label("Select Marker Opacity:"),
+            dcc.Slider(
+                id='marker-opacity-1',
+                min=0.1, max=1.0, step=0.1, value=0.8,
+                marks={i/10: str(i/10) for i in range(1, 11)},
+                tooltip={'always_visible': True, 'placement': 'bottom'}
+            )
+        ], id='marker-opacity-group-1', style={'display': 'none'}),
+        html.Div([
+            html.Label("Select Line Thickness for Y-Axis:"),
+            dcc.Slider(
+                id='line-thickness',
+                min=1, max=10, step=1, value=2,
+                marks={i: str(i) for i in range(1, 11)},
+                tooltip={'always_visible': True, 'placement': 'bottom'}
+            )], id='line-thickness-group'),
+            
     html.Label("Select X-axis:"),
     dcc.Dropdown(id='x-axis-diff', style={'width': '300px'}),
     html.Label("Select Y-axis:"),
@@ -155,23 +160,27 @@ layout = html.Div([
 ])
 
 @callback(
-    Output('scatter-mode-1', 'style'),  # Scatter mode option
-    Output('marker-size-1', 'style'),  # Marker size option
-    Output('marker-opacity-1', 'style'),  # Marker opacity option
+    Output('scatter-mode-group-1', 'style'),  # Scatter mode option
+    Output('marker-size-group-1', 'style'),  # Marker size option
+    Output('marker-opacity-group-1', 'style'),  # Marker opacity option
     Input('graph-type', 'value')  # Graph type selection
 )
-def toggle_line_options(graph_type):
-    # Default styles: hide all options
+def toggle_scatter_options(graph_type):
     hidden = {'display': 'none'}
     visible = {'display': 'block'}
     
-    if graph_type == 'line':
-        return [visible, hidden, hidden]  # Only line thickness visible
-    elif graph_type == 'scatter':
-        return [visible, visible, visible]  # All scatter options visible
-    elif graph_type in ['bar', 'histogram', 'heatmap']:  # Other graph types
-        return [hidden, hidden, hidden]  # Hide all options
-    return [hidden, hidden, hidden]  # Default: Hide all options
+    if graph_type == 'scatter':
+        return visible, visible, visible
+    else:
+        return hidden, hidden, hidden
+
+@callback(
+    Output('line-thickness-group', 'style'),
+    Input('graph-type', 'value')
+)
+
+def toggle_line_options(graph_type):
+    return {'display': 'block'} if graph_type in ['line'] else {'display': 'none'}
 
 @callback(
     [
