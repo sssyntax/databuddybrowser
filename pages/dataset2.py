@@ -5,7 +5,7 @@ import plotly.express as px
 import io
 import base64
 
-dash.register_page(__name__, path="/visualisation_2_sep", title="Visualisation: 2 Separate Graphs", name="DVisualisation: 2 Separate Graphs", order=1)
+dash.register_page(__name__, path="/visualisation_2_sep", title="Visualisation: 2 Separate Graphs", name="Visualisation: 2 Separate Graphs", order=1)
 
 # Initialize global variables for datasets and names
 df = pd.DataFrame()
@@ -66,6 +66,49 @@ layout = html.Div([
                 placeholder="Select Graph Type",
                 style={'width': '200px'}
             ),
+            html.Div([
+                html.Label("Scatter Mode:"),
+                dcc.Dropdown(
+                    id='scatter-mode-comp-1',
+                    options=[
+                        {'label': 'Markers', 'value': 'markers'},
+                        {'label': 'Lines+Markers', 'value': 'lines+markers'}
+                    ],
+                    value='markers',
+                    style={'width': '200px'}
+                )
+            ], id='scatter-mode-group-comp-1', style={'display': 'none'}),
+            
+            html.Div([
+                html.Label("Marker Size:"),
+                dcc.Slider(
+                    id='marker-size-comp-1',
+                    min=1, max=20, step=1, value=6,
+                    marks={i: str(i) for i in range(1, 21, 2)},
+                    tooltip={'placement': 'bottom'}
+                )
+            ], id='marker-size-group-comp-1', style={'display': 'none'}),
+            
+            html.Div([
+                html.Label("Marker Opacity:"),
+                dcc.Slider(
+                    id='marker-opacity-comp-1',
+                    min=0, max=1, step=0.1, value=0.8,
+                    marks={i/10: f"{i/10:.1f}" for i in range(0, 11, 2)},
+                    tooltip={'placement': 'bottom'}
+                )
+            ], id='marker-opacity-group-comp-1', style={'display': 'none'}),
+            
+            html.Div([
+                html.Label("Line Thickness:"),
+                dcc.Slider(
+                    id='line-thickness-1',
+                    min=1, max=10, step=1, value=2,
+                    marks={i: str(i) for i in range(1, 11)},
+                    tooltip={'placement': 'bottom'}
+                )
+            ], id='line-thickness-group-1', style={'display': 'none'}),
+
             html.Label("Select X-axis:"),
             html.Br(),
             dcc.Dropdown(
@@ -102,8 +145,49 @@ layout = html.Div([
                 placeholder="Select Graph Type",
                 style={'width': '200px'}
             ),
+            html.Div([
+                html.Label("Scatter Mode:"),
+                dcc.Dropdown(
+                    id='scatter-mode-comp-2',
+                    options=[
+                        {'label': 'Markers', 'value': 'markers'},
+                        {'label': 'Lines+Markers', 'value': 'lines+markers'}
+                    ],
+                    value='markers',
+                    style={'width': '200px'}
+                )
+            ], id='scatter-mode-group-comp-2', style={'display': 'none'}),
+            
+            html.Div([
+                html.Label("Marker Size:"),
+                dcc.Slider(
+                    id='marker-size-comp-2',
+                    min=1, max=20, step=1, value=6,
+                    marks={i: str(i) for i in range(1, 21, 2)},
+                    tooltip={'placement': 'bottom'}
+                )
+            ], id='marker-size-group-comp-2', style={'display': 'none'}),
+            
+            html.Div([
+                html.Label("Marker Opacity:"),
+                dcc.Slider(
+                    id='marker-opacity-comp-2',
+                    min=0, max=1, step=0.1, value=0.8,
+                    marks={i/10: f"{i/10:.1f}" for i in range(0, 11, 2)},
+                    tooltip={'placement': 'bottom'}
+                )
+            ], id='marker-opacity-group-comp-2', style={'display': 'none'}),
+            
+            html.Div([
+                html.Label("Line Thickness:"),
+                dcc.Slider(
+                    id='line-thickness-2',
+                    min=1, max=10, step=1, value=2,
+                    marks={i: str(i) for i in range(1, 11)},
+                    tooltip={'placement': 'bottom'}
+                )
+            ], id='line-thickness-group-2', style={'display': 'none'}),
             html.Label("Select X-axis:"),
-            html.Br(),
             dcc.Dropdown(
                 id='x-axis-2',
                 options=[],
@@ -218,6 +302,42 @@ def update_dataset_2(contents, filename):
 
     return upload_message, f"{df_1_name} Graph", options, options, x_value, y_value
 
+#callbacks for visibility for dataset 1
+
+@callback(
+    Output('scatter-mode-group-comp-1', 'style'),
+    Output('marker-size-group-comp-1', 'style'),
+    Output('marker-opacity-group-comp-1', 'style'),
+    Output('line-thickness-group-1', 'style'),
+    Input('graph-type-1', 'value')
+)
+def toggle_controls_1(graph_type):
+    hidden = {'display': 'none'}
+    visible = {'display': 'block'}
+    if graph_type == 'scatter':
+        return visible, visible, visible, visible
+    elif graph_type == 'line':
+        return hidden, hidden, hidden, visible
+    else:
+        return hidden, hidden, hidden, hidden
+    
+#callbacks for visibility for dataset 2
+@callback(
+    Output('scatter-mode-group-comp-2', 'style'),
+    Output('marker-size-group-comp-2', 'style'),
+    Output('marker-opacity-group-comp-2', 'style'),
+    Output('line-thickness-group-2', 'style'),
+    Input('graph-type-2', 'value')
+)
+def toggle_controls_2(graph_type):
+    hidden = {'display': 'none'}
+    visible = {'display': 'block'}
+    if graph_type == 'scatter':
+        return visible, visible, visible, visible
+    elif graph_type == 'line':
+        return hidden, hidden, hidden, visible
+    else:
+        return hidden, hidden, hidden, hidden
 
 # Callbacks for Dataset 1 graph
 @callback(
