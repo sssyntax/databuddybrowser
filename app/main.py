@@ -5,6 +5,8 @@ import dash_bootstrap_components as dbc
 # Create Dash app
 app = Dash(__name__, external_stylesheets=[dbc.themes.CERULEAN], use_pages=True, pages_folder='/workspaces/databuddybrowser/pages', suppress_callback_exceptions=True)
 
+server = app.server
+
 # Define the main layout (only for the home page)
 app.layout = html.Div([
     html.H1("DataBuddy", style={'textAlign': 'center'}),
