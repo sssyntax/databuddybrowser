@@ -22,8 +22,16 @@ def normalise(df):
 
 # Time adjustment and interpolation logic
 def adjust_time(row, base_day, base_hour):
-    minutes_seconds = datetime.strptime(row, '%H:%M:%S.%f').time()
-    if minutes_seconds == datetime.strptime('00:00:00.000', '%H:%M:%S.%f').time():
+    # Updated format to match MM:SS.ms (e.g., '09:51.1')
+    try:
+        # Try parsing with the new format
+        minutes_seconds = datetime.strptime(row, '%M:%S.%f').time()
+    except ValueError:
+        # Handle cases where the format might differ (e.g., missing milliseconds)
+        minutes_seconds = datetime.strptime(row, '%M:%S').time()
+    
+    # Existing logic to adjust time based on base_day and base_hour
+    if minutes_seconds == datetime.strptime('00:00.0', '%M:%S.%f').time():
         base_hour += 1
     combined_time = datetime.combine(base_day, minutes_seconds) + timedelta(hours=base_hour)
     return combined_time
@@ -41,7 +49,6 @@ def convert_time(df, df1): #2nd one is redundant but works
     base_hour = base_date.hour
 
     df1[f'Adjusted {cols1[0]}'] = (df1[cols1[0]].apply(adjust_time, args=(base_day, base_hour)))
-    # df1.to_csv(r'c:\Users\GAdmin\Desktop\internship\Sindya\app\new.csv')
 
     time_ADP = df[cols[0]]
     time_emu = df1[f'Adjusted {cols1[0]}']
